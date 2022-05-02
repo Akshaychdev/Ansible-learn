@@ -1,0 +1,53 @@
+---
+- name: Common Ansible modules Learn
+
+  # Hosts: where our play will run and options it will run with
+  hosts: ubuntu3,centos3
+
+  tasks:
+    - name: Set a fact
+      set_fact:
+        our_fact: Ansible Rocks!
+
+    - name: Show custom fact
+      debug:
+        msg: '{{ our_fact }}'
+
+    # Rewriting an Existing Fact
+    - name: Rewrite an Existing Fact
+      set_fact:
+        ansible_distribution: '{{ ansible_distribution | upper }}'
+
+    # Expected: UBUNTU & CENTOS
+    - name: Show Modified Existing Fact
+      debug:
+        msg: '{{ ansible_distribution }}'
+
+    # Set fact based on when conditions met
+    - name: Set our installation variables for CentOS
+      set_fact:
+        webserver_application_port: 80
+        webserver_application_path: /usr/share/nginx/html
+        webserver_application_user: root
+      when: ansible_distribution == 'CentOS'
+
+    - name: Set our installation variables for Ubuntu
+      set_fact:
+        webserver_application_port: 8080
+        webserver_application_path: /var/www/html
+        webserver_application_user: nginx
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Show pre-set distribution based facts
+      debug:
+        msg: 'webserver_application_port:{{ webserver_application_port }} webserver_application_path:{{ webserver_application_path }} webserver_application_user:{{ webserver_application_user }}'
+
+    # Usage of pause module
+    - name: Pause the playbook Execution For 10 sec
+      pause:
+        seconds: 10
+
+    # Pause with Prompt
+    - name: Pause with Prompt User to Verify before continue
+      pause:
+        prompt: Please check that the webserver is running, press enter to continue

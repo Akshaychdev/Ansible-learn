@@ -1,0 +1,81 @@
+---
+# Installing epel for centos hosts
+
+- name: Install nginix on hosts
+  hosts: linux
+  gather_facts: yes
+  # Load external variables
+  vars_files:
+    - vars/logos.yaml
+
+  tasks:
+    - name: Installing epel for centos hosts
+      yum:
+        name: epel-release
+        state: latest
+        update_cache: yes
+      when: ansible_distribution == "CentOS"
+
+    - name: Installing nginx
+      package:
+        name: nginx
+        state: latest
+
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
+      notify:
+        - Check Web-Server Availability
+
+    # To copy a base template from source to different hosts to group-var set destination location
+    # (Templates are processed by the Jinja2 templating language.)
+    # No need to specify templates/index.html-base.j2 as template module looks in templates
+    - name: Template index.html-base.j2 to index.html on target
+      ansible.builtin.template:
+        src: index.html-base.j2
+        # Paste as `index.html`
+        dest: '{{ nginx_root_location }}/index.html'
+        mode: '0644'
+
+    # To copy a modilfied template file - That containes the `ansible_managed` variable
+    # Indicating the file is managed by ansible - index.html-ansible_managed.j2
+    - name: Template index.html-ansible_managed.j2 to index.html on target
+      ansible.builtin.template:
+        src: index.html-ansible_managed.j2
+        dest: '{{ nginx_root_location }}/index.html'
+        mode: '0644'
+
+    # Adding logo data for centos and ubuntu hosts in template by using
+    # external variables added to the playbook,
+    - name: Template index.html-logos.j2 to index.html on target
+      ansible.builtin.template:
+        src: index.html-logos.j2
+        dest: '{{ nginx_root_location }}/index.html'
+        mode: '0644'
+
+    # Installing Unzip Package
+    - name: Installing Unzip
+      package:
+        name: unzip
+        state: latest
+
+    # Unzip playbook stacker game to nginx_root_location
+    - name: Unarchive Playbook Stacker game
+      ansible.builtin.unarchive:
+        src: playbook_stacker.zip
+        dest: '{{ nginx_root_location }}'
+        mode: 0755
+
+    # Add the template index.html-easter_egg.j2
+    - name: Template index.html-easter_egg.j2 to index.html on target
+      ansible.builtin.template:
+        src: index.html-easter_egg.j2
+        dest: '{{ nginx_root_location }}/index.html'
+        mode: '0644'
+
+  handlers:
+    - name: Check Web-Server Availability
+      uri:
+        url: http://{{ ansible_default_ipv4.address }}
+        status_code: 200
