@@ -1,0 +1,14 @@
+---
+- hosts: all
+
+  tasks:
+    # Task to create a group based on ansible_distribution custom_centos/custom_ubuntu
+    - name: Create group based on ansible_distribution
+      group_by:
+        key: 'custom_{{ ansible_distribution | lower }}'
+
+- hosts: custom_centos
+  # By This way we've isolated all centos hosts to one group
+  tasks:
+    - name: Ping all in custom_centos
+      ping:

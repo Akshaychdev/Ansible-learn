@@ -1,0 +1,35 @@
+---
+# Play 1
+- name: Ansible modules - assemble and add_hosts
+  hosts: ubuntu-c
+
+  tasks:
+    # Assemble the fragment files in `conf.d` directory to a single sshd_config
+    - name: Assemble conf.d to sshd_config
+      assemble:
+        src: conf.d
+        dest: sshd_config
+
+    # Add exising hosts to groups
+    - name: Add centos1 to adhoc_group
+      add_host:
+        name: centos1
+        groups: adhoc_group1, adhoc_group2
+
+- # Play 2 with different host
+  hosts: adhoc_group1
+
+  tasks:
+    - name: Ping all in adhoc_group1
+      ping:
+
+# Play 3
+- name: Using Ansible fetch modules
+  hosts: centos
+
+  tasks:
+    # To fetch centos redhat release version file(src) and put in dest.
+    - name: Fetch /etc/redhat-release
+      fetch:
+        src: /etc/redhat-release
+        dest: /tmp/redhat-release
