@@ -1,4 +1,6 @@
-# Automation With Ansible <!-- omit in toc -->
+# [Automation With Ansible](https://www.udemy.com/share/103P2u3@GQB3U3-FB_bWJSd-9ZTiTmsyg3VeA2wb5of_ya7D2AApviIZ-uWLLVnVVtK5vDLp/) <!-- omit in toc -->
+
+This Doc Content and Material adapted from the [Dive into Ansible Course by James Spurin](https://www.udemy.com/share/103P2u3@GQB3U3-FB_bWJSd-9ZTiTmsyg3VeA2wb5of_ya7D2AApviIZ-uWLLVnVVtK5vDLp/)
 
 ![Ansible Cover](Automation%20With%20Ansible%206980e66f838c4aca875bb436e0a6abf6/ansible.png)
 
